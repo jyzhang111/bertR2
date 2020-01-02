@@ -77,6 +77,26 @@ class Bert:
         word = "on"
         self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
 
+        sent = "[CLS] Lights off. [SEP]"
+        word = "off"
+        self.wordEmbeddings["off4"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Lights on. [SEP]"
+        word = "on"
+        self.wordEmbeddings["on4"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Lights out. [SEP]"
+        word = "out"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn on holoemitter. [SEP]"
+        word = "on"
+        self.wordEmbeddings["on3"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn off holoemitter. [SEP]"
+        word = "off"
+        self.wordEmbeddings["off3"] = self.wordEmbeddingNewSentence(sent, word)
+
         sent = "[CLS] Set your lights to maximum intensity. [SEP]"
         word = "maximum"
         self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
@@ -91,6 +111,14 @@ class Bert:
 
         sent = "[CLS] Decrease the blue value of your back LED by 50%. [SEP]"
         word = "decrease"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Add 100 to the red value of your front LED. [SEP]"
+        word = "add"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Minus 100 to the red value of your front LED. [SEP]"
+        word = "minus"
         self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
 
         sent = "[CLS] Waddle off. [SEP]"
@@ -109,6 +137,15 @@ class Bert:
         word = "front"
         self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
 
+        sent = "[CLS] Change your back LED to be green. [SEP]"
+        word = "back"
+        self.wordEmbeddings["back2"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Change your front LED to be green. [SEP]"
+        word = "front"
+        self.wordEmbeddings["front2"] = self.wordEmbeddingNewSentence(sent, word)
+
+
 
         sent = "[CLS] Blink your logic display. [SEP]"
         word = "blink"
@@ -120,6 +157,151 @@ class Bert:
 
         sent = "[CLS] Increase your speed by 50 percent. [SEP]"
         word = "percent"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+
+
+
+
+        ## start of driving words
+        sent = "[CLS] Set your front light red. [SEP]"
+        word = "set"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Change the blue value of your front LED by 20%. [SEP]"
+        word = "change"
+        self.wordEmbeddings["set3"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Set speed to be 20%. [SEP]"
+        word = "set"
+        self.wordEmbeddings["set2"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Go faster. [SEP]"
+        word = "faster"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Go slower. [SEP]"
+        word = "slower"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+
+
+        sent = "[CLS] Turn left. [SEP]"
+        word = "left"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn right. [SEP]"
+        word = "right"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn forward. [SEP]"
+        word = "forward"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn backward. [SEP]"
+        word = "backward"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Start rolling left. [SEP]"
+        word = "left"
+        self.wordEmbeddings["left2"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Start rolling right. [SEP]"
+        word = "right"
+        self.wordEmbeddings["right2"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Start rolling forward. [SEP]"
+        word = "forward"
+        self.wordEmbeddings["forward2"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Start rolling backward. [SEP]"
+        word = "backward"
+        self.wordEmbeddings["backward2"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] There is a bug to your left, run away! [SEP]"
+        word = "left"
+        self.wordEmbeddings["left3"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] There is a bug to your right, run away! [SEP]"
+        word = "right"
+        self.wordEmbeddings["right3"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] There is a bug ahead of you, run away! [SEP]"
+        word = "ahead"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] There is a bug behind you, run away! [SEP]"
+        word = "behind"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Go back. [SEP]"
+        word = "back"
+        self.wordEmbeddings["behind2"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Go ahead. [SEP]"
+        word = "ahead"
+        self.wordEmbeddings["ahead2"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn back. [SEP]"
+        word = "back"
+        self.wordEmbeddings["behind3"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn around. [SEP]"
+        word = "around"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        
+
+        sent = "[CLS] Go left. [SEP]"
+        word = "go"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn left. [SEP]"
+        word = "turn"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn to heading 30 degrees. [SEP]"
+        word = "turn"
+        self.wordEmbeddings["turn2"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn around. [SEP]"
+        word = "turn"
+        self.wordEmbeddings["turn3"] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Head left. [SEP]"
+        word = "head"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+
+
+        sent = "[CLS] Start rolling forward. [SEP]"
+        word = "start"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Stop rolling. [SEP]"
+        word = "stop"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Halt. [SEP]"
+        word = "halt"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Start continuous roll. [SEP]"
+        word = "continuous"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+
+
+        sent = "[CLS] Go forward for 2 feet. [SEP]"
+        word = "feet"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Go forward for 2 seconds. [SEP]"
+        word = "seconds"
+        self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
+
+        sent = "[CLS] Turn to heading 30 degrees. [SEP]"
+        word = "heading"
         self.wordEmbeddings[word] = self.wordEmbeddingNewSentence(sent, word)
 
     def wordEmbeddingNewSentence(self, sent, word):
@@ -139,10 +321,20 @@ class Bert:
     def contextWordSim(self, word, sentWord):
         if sentWord not in self.tokenized_text: return 0 # bert tokenization works differently, for common words they are all in
 
-        sum_vec = torch.sum(self.token_embeddings[self.tokenized_text.index(word)][-4:], dim = 0).numpy()
+        sum_vec = torch.sum(self.token_embeddings[self.tokenized_text.index(sentWord)][-4:], dim = 0).numpy()
 
-        if word == "off": return max(cosineSimilarity(self.wordEmbeddings["off"], sum_vec), cosineSimilarity(self.wordEmbeddings["off2"], sum_vec))
-        if word == "on": return max(cosineSimilarity(self.wordEmbeddings["on"], sum_vec), cosineSimilarity(self.wordEmbeddings["on2"], sum_vec))
+        if word == "off": return max(cosineSimilarity(self.wordEmbeddings["off"], sum_vec), cosineSimilarity(self.wordEmbeddings["off2"], sum_vec), cosineSimilarity(self.wordEmbeddings["off3"], sum_vec), cosineSimilarity(self.wordEmbeddings["off4"], sum_vec))
+        if word == "on": return max(cosineSimilarity(self.wordEmbeddings["on"], sum_vec), cosineSimilarity(self.wordEmbeddings["on2"], sum_vec), cosineSimilarity(self.wordEmbeddings["on3"], sum_vec), cosineSimilarity(self.wordEmbeddings["on4"], sum_vec))
+        if word == "front": return max(cosineSimilarity(self.wordEmbeddings["front"], sum_vec), cosineSimilarity(self.wordEmbeddings["front2"], sum_vec))
+        if word == "back": return max(cosineSimilarity(self.wordEmbeddings["back"], sum_vec), cosineSimilarity(self.wordEmbeddings["back2"], sum_vec))
+        if word == "left": return max(cosineSimilarity(self.wordEmbeddings["left"], sum_vec), cosineSimilarity(self.wordEmbeddings["left2"], sum_vec), cosineSimilarity(self.wordEmbeddings["left3"], sum_vec))
+        if word == "right": return max(cosineSimilarity(self.wordEmbeddings["right"], sum_vec), cosineSimilarity(self.wordEmbeddings["right2"], sum_vec), cosineSimilarity(self.wordEmbeddings["right3"], sum_vec))
+        if word == "forward": return max(cosineSimilarity(self.wordEmbeddings["forward"], sum_vec), cosineSimilarity(self.wordEmbeddings["forward2"], sum_vec))
+        if word == "backward": return max(cosineSimilarity(self.wordEmbeddings["backward"], sum_vec), cosineSimilarity(self.wordEmbeddings["backward2"], sum_vec))
+        if word == "ahead": return max(cosineSimilarity(self.wordEmbeddings["ahead"], sum_vec), cosineSimilarity(self.wordEmbeddings["ahead"], sum_vec))
+        if word == "behind": return max(cosineSimilarity(self.wordEmbeddings["behind"], sum_vec), cosineSimilarity(self.wordEmbeddings["behind2"], sum_vec), cosineSimilarity(self.wordEmbeddings["behind3"], sum_vec))
+        if word == "turn": return max(cosineSimilarity(self.wordEmbeddings["turn"], sum_vec), cosineSimilarity(self.wordEmbeddings["turn2"], sum_vec), cosineSimilarity(self.wordEmbeddings["turn3"], sum_vec))
+        if word == "set": return max(cosineSimilarity(self.wordEmbeddings["set"], sum_vec), cosineSimilarity(self.wordEmbeddings["set2"], sum_vec), cosineSimilarity(self.wordEmbeddings["set3"], sum_vec))
         if word in self.wordEmbeddings: return cosineSimilarity(self.wordEmbeddings[word], sum_vec)
 
         print("This world has not had a contextualized word embedding yet. See the method generateWordEmbeddings in the Bert class of r2d2_bert.py for more details.")
@@ -255,9 +447,9 @@ class Bert:
         commandDict[indexToSentence[closestSentences[3]][1]] += 0.2
         commandDict[indexToSentence[closestSentences[4]][1]] += 0.2
 
-        print(commandDict)
-        print("Closest sentence was: " + indexToSentence[closestSentences[0]][0])
-        print(cosineSimilarity(commandEmbedding, sentenceEmbeddings[closestSentences[0], :]))
+        # print(commandDict)
+        # print("Closest sentence was: " + indexToSentence[closestSentences[0]][0])
+        # print(cosineSimilarity(commandEmbedding, sentenceEmbeddings[closestSentences[0], :]))
 
         if cosineSimilarity(commandEmbedding, sentenceEmbeddings[closestSentences[0], :]) < 0.73:
             return "no"

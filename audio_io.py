@@ -55,7 +55,7 @@ class MicrophoneStream(object):
         self._buff.put(None)
         self._audio_interface.terminate()
 
-    def _fill_buffer(self, in_data):
+    def _fill_buffer(self, in_data, frame_count, time_info, status_flags):
         """Continuously collect data from the audio stream, into the buffer."""
         self._buff.put(in_data)
         return None, pyaudio.paContinue
@@ -145,7 +145,7 @@ def listen_execute_loop(responses, robot):
             else:
                 robot.inputCommand(cmd)
 
-            print("You: ", end = "")
+            print("\nPlease say your instruction: ")
             num_chars_printed = 0
 
 def main():

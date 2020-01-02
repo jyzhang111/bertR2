@@ -13,8 +13,11 @@ from client import DroidClient
 class Robot:
     def __init__(self, droidID, wordSimCutoff, voice):
         self.bert = Bert()
+        start = time.time()
         self.createSentenceEmbeddings()
         self.bert.generateWordEmbeddings()
+        end = time.time()
+        print("Time to generate preliminary word/sentence embeddings is: " + str(end - start))
         self.droid = DroidClient()
         self.name = "R2"
         self.wordSimCutoff = wordSimCutoff
@@ -29,7 +32,7 @@ class Robot:
 
         self.heading = 0
         self.speed = 0.5
-        self.oneFootConstant = 0.625
+        self.oneFootConstant = 0.65
 
         self.grid = [[]]
         self.gridSize = 1
@@ -78,7 +81,11 @@ class Robot:
         elif "i hate you" in command.lower():
             # min happiness
             self.happiness = -1
-            with noStdOut(): self.droid.play_sound(random.choice([4, 12]))
+            with noStdOut():
+                choice = random.choice([0, 1, 2])
+                if choice == 0: self.droid.animate(23)
+                if choice == 1: self.droid.play_sound(4)
+                if choice == 1: self.droid.play_sound(12)
             if commandType == "no":
                 print(self.name + ": >:(")
                 return
@@ -117,7 +124,7 @@ class Robot:
             if hasattr(self.droid, "is_continuous_roll"):
                 if self.droid.is_continuous_roll:
                     return
-            if self.droid.connected_to_droid:
+            if self.droid.connected_to_droid and commandType != "animation":
                 with noStdOut(): self.droid.play_sound(random.choice([20, 29])) # play a sound after executing a successful command
         else:
             print(self.name + ": I could not understand your " + commandType + " command.")
@@ -167,6 +174,7 @@ class Robot:
             print("We detect that you want to change your " + lightPosition + " light, but could not find a color.")
         else:
             print("We parsed this as a light command, but could not find a color.")
+        if self.voice: return False
         command = input("Do you want to input a color? (yes/no): ")
         color = False
         if "yes" in command.lower():
@@ -231,10 +239,11 @@ class Robot:
             if self.bert.contextWordSim("percent", word) > self.wordSimCutoff:
                 slots["percent"] = True
 
-            if self.bert.contextWordSim("dim", word) > self.wordSimCutoff:
+            dim = self.bert.contextWordSim("dim", word)
+            blink = self.bert.contextWordSim("blink", word)
+            if dim > self.wordSimCutoff and word != "turn" and dim > blink:
                 slots["intensities"].add("dim")
-
-            if self.bert.contextWordSim("blink", word) > self.wordSimCutoff:
+            if blink > self.wordSimCutoff and word != "turn" and blink > dim:
                 slots["intensities"].add("blink")
 
             back = self.bert.contextWordSim("back", word)
@@ -244,14 +253,15 @@ class Robot:
             if front > self.wordSimCutoff and front > back:
                 slots["lights"].append("front")
 
-            add = self.bert.contextWordSim("increase", word)
-            sub = self.bert.contextWordSim("decrease", word)
-            if add > self.wordSimCutoff and add > sub:
+            add = max(self.bert.contextWordSim("increase", word), self.bert.contextWordSim("add", word))
+            sub = max(self.bert.contextWordSim("decrease", word), self.bert.contextWordSim("minus", word))
+            setting = self.bert.contextWordSim("set", word) # set is really similar to increase, decrease
+            if add > self.wordSimCutoff and add > sub and add > setting:
                 slots["valueChange"] = "add"
-            if sub > self.wordSimCutoff and sub > add:
+            if sub > self.wordSimCutoff and sub > add and sub > setting:
                 slots["valueChange"] = "sub"
 
-            off = max(self.bert.contextWordSim("off", word), self.bert.contextWordSim("minimum", word))
+            off = max(self.bert.contextWordSim("off", word), self.bert.contextWordSim("minimum", word), self.bert.contextWordSim("out", word))
             on = max(self.bert.contextWordSim("on", word), self.bert.contextWordSim("maximum", word))
             if off > self.wordSimCutoff and off > on:
                 slots["intensities"].add("off")
@@ -278,36 +288,36 @@ class Robot:
 
     def lightSlotsToActions(self, slots):
         if "holoEmit" in slots["lights"]:
-            if "off" in slots["intensities"]:
-                self.holoProjectorIntensity = 0
+            if "blink" in slots["intensities"]:
+                self.droid.set_holo_projector_intensity((self.holoProjectorIntensity + 1)%2)
+                time.sleep(0.3)
                 self.droid.set_holo_projector_intensity(self.holoProjectorIntensity)
             elif "dim" in slots["intensities"]:
                 self.holoProjectorIntensity = self.holoProjectorIntensity / 2
                 self.droid.set_holo_projector_intensity(self.holoProjectorIntensity)
+            elif "off" in slots["intensities"]:
+                self.holoProjectorIntensity = 0
+                self.droid.set_holo_projector_intensity(self.holoProjectorIntensity)
             elif "on" in slots["intensities"]:
                 self.holoProjectorIntensity = 1
-                self.droid.set_holo_projector_intensity(self.holoProjectorIntensity)
-            elif "blink" in slots["intensities"]:
-                self.droid.set_holo_projector_intensity((self.holoProjectorIntensity + 1)%2)
-                time.sleep(0.3)
                 self.droid.set_holo_projector_intensity(self.holoProjectorIntensity)
             else:
                 return False
             return True
 
         if "logDisp" in slots["lights"]:
-            if "off" in slots["intensities"]:
-                self.logicDisplayIntensity = 0
+            if "blink" in slots["intensities"]:
+                self.droid.set_logic_display_intensity((self.logicDisplayIntensity + 1)%2)
+                time.sleep(0.3)
                 self.droid.set_logic_display_intensity(self.logicDisplayIntensity)
             elif "dim" in slots["intensities"]:
                 self.logicDisplayIntensity = self.logicDisplayIntensity / 2
                 self.droid.set_logic_display_intensity(self.logicDisplayIntensity)
+            elif "off" in slots["intensities"]:
+                self.logicDisplayIntensity = 0
+                self.droid.set_logic_display_intensity(self.logicDisplayIntensity)
             elif "on" in slots["intensities"]:
                 self.logicDisplayIntensity = 1
-                self.droid.set_logic_display_intensity(self.logicDisplayIntensity)
-            elif "blink" in slots["intensities"]:
-                self.droid.set_logic_display_intensity((self.logicDisplayIntensity + 1)%2)
-                time.sleep(0.3)
                 self.droid.set_logic_display_intensity(self.logicDisplayIntensity)
             else:
                 return False
@@ -363,7 +373,7 @@ class Robot:
 
         if "back" in slots["lights"] and len(slots["lights"]) == 1:
             if len(slots["colors"]) > 1:
-                seconds = slots["increment/seconds"]
+                seconds = slots["numValue"]
                 if not seconds: seconds = 1
                 self.flash_colors(slots["colors"], seconds, False)
             elif len(slots["colors"]) == 1:
@@ -378,7 +388,7 @@ class Robot:
 
         if ("front" in slots["lights"] and len(slots["lights"]) == 1) or len(slots["colors"]) > 1:
             if len(slots["colors"]) > 1:
-                seconds = slots["increment/seconds"]
+                seconds = slots["numValue"]
                 if not seconds: seconds = 1
                 self.flash_colors(slots["colors"], seconds)
             elif len(slots["colors"]) == 1:
@@ -398,15 +408,12 @@ class Robot:
             self.droid.set_front_LED_color(*self.frontRGB)
             return True
 
-        if "off" in slots["intensities"]:
-            self.holoProjectorIntensity = 0
+        if "blink" in slots["intensities"]:
+            self.droid.set_holo_projector_intensity((self.holoProjectorIntensity + 1)%2)
+            self.droid.set_logic_display_intensity((self.holoProjectorIntensity + 1)%2)
+            time.sleep(0.3)
             self.droid.set_holo_projector_intensity(self.holoProjectorIntensity)
-            self.logicDisplayIntensity = 0
-            self.droid.set_logic_display_intensity(self.logicDisplayIntensity)
-            self.backRGB = (0, 0, 0)
-            self.frontRGB = (0, 0, 0)
-            self.droid.set_back_LED_color(*self.backRGB)
-            self.droid.set_front_LED_color(*self.frontRGB)
+            self.droid.set_logic_display_intensity(self.logicDisplayIntensity)  
             return True
         elif "dim" in slots["intensities"]:
             self.holoProjectorIntensity = 0
@@ -418,18 +425,21 @@ class Robot:
             self.droid.set_back_LED_color(*self.backRGB)
             self.droid.set_front_LED_color(*self.frontRGB)
             return True
+        elif "off" in slots["intensities"]:
+            self.holoProjectorIntensity = 0
+            self.droid.set_holo_projector_intensity(self.holoProjectorIntensity)
+            self.logicDisplayIntensity = 0
+            self.droid.set_logic_display_intensity(self.logicDisplayIntensity)
+            self.backRGB = (0, 0, 0)
+            self.frontRGB = (0, 0, 0)
+            self.droid.set_back_LED_color(*self.backRGB)
+            self.droid.set_front_LED_color(*self.frontRGB)
+            return True
         elif "on" in slots["intensities"]:
             self.holoProjectorIntensity = 1
             self.droid.set_holo_projector_intensity(self.holoProjectorIntensity)
             self.logicDisplayIntensity = 1
             self.droid.set_logic_display_intensity(self.logicDisplayIntensity)
-            return True
-        elif "blink" in slots["intensities"]:
-            self.droid.set_holo_projector_intensity((self.holoProjectorIntensity + 1)%2)
-            self.droid.set_logic_display_intensity((self.holoProjectorIntensity + 1)%2)
-            time.sleep(0.3)
-            self.droid.set_holo_projector_intensity(self.holoProjectorIntensity)
-            self.droid.set_logic_display_intensity(self.logicDisplayIntensity)  
             return True
 
         if len(slots["colors"]) == 0:
@@ -500,13 +510,6 @@ class Robot:
 
         ################################################
 
-        if "increase" in command or "add" in command or "faster" in command:
-            slots["speedChange"] = "add"
-        if "decrease" in command or "reduce" in command or "subtract" in command or "slower" in command:
-            slots["speedChange"] = "sub"
-        if "set" in command:
-            slots["speedChange"] = "set"
-
         if re.search(r"\b(circle|donut)\b", command, re.I):
             slots["shape"].append("circle")
         if re.search(r"\b(square)\b", command, re.I):
@@ -516,15 +519,6 @@ class Robot:
             slots["driveModifiers"].append("half")
         if "twice" in command:
             slots["driveModifiers"].append("twice")
-        if "feet" in command or "foot" in command:
-            slots["driveModifiers"].append("feet")
-        if "seconds" in command or "second" in command:
-            slots["driveModifiers"].append("seconds")
-
-        if "start" in command or "continuous" in command:
-            slots["continuous"] = "start"
-        if "stop" in command or "halt" in command:
-            slots["continuous"] = "stop"
 
         if "run away" in command:
             slots["continuous"] = "start"
@@ -536,6 +530,8 @@ class Robot:
         if "heading" in command:
             slots["heading"] = True
 
+        command = command.strip()
+        if command[-1] == ".": command = command[:-1]
         words = re.split('[^\w.]+', command)
         words = [x for x in words if x != ""]
 
@@ -543,15 +539,51 @@ class Robot:
             if self.bert.contextWordSim("percent", word) > self.wordSimCutoff:
                 slots["percent"] = True
             if word in self.numDict: word = self.numDict[word]
+            if word == "rightward": word = "right" # rightward, leftward not in bert tokenizer
+            if word == "leftward": word = "left"
             if word in ["north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest"]: slots["directions"].append(word)
-            if word in ["right", "left", "forward", "backward"]: slots["directions"].append(word)
-            if word == "rightward": slots["directions"].append("right")
-            if word == "leftward": slots["directions"].append("left")
-            if word == "ahead": slots["directions"].append("forward")
-            if word == "back": slots["directions"].append("backward")
-            if word == "go" or word == "drive" or word == "roll" or word == "head": slots["directions"].append("go")
-            if word == "turn": slots["directions"].append("turn")
+
+            add = max(self.bert.contextWordSim("increase", word), self.bert.contextWordSim("add", word), self.bert.contextWordSim("faster", word))
+            sub = max(self.bert.contextWordSim("decrease", word), self.bert.contextWordSim("minus", word), self.bert.contextWordSim("slower", word))
+            setting = self.bert.contextWordSim("set", word)
+            if add > self.wordSimCutoff and add > sub and add > setting:
+                slots["speedChange"] = "add"
+            if sub > self.wordSimCutoff and sub > add and sub > setting:
+                slots["speedChange"] = "sub"
+            if setting > self.wordSimCutoff and setting > add and setting > sub:
+                slots["speedChange"] = "set"
+
+            left = self.bert.contextWordSim("left", word)
+            right = self.bert.contextWordSim("right", word)
+            forward = max(self.bert.contextWordSim("forward", word), self.bert.contextWordSim("ahead", word))
+            backward = max(self.bert.contextWordSim("backward", word), self.bert.contextWordSim("behind", word), self.bert.contextWordSim("around", word))
+            directionList = [("left", left), ("right", right), ("forward", forward), ("backward", backward)]
+            directionList = sorted(directionList, key = lambda x: x[1], reverse = True)
+            if directionList[0][1] > self.wordSimCutoff: slots["directions"].append(directionList[0][0])
+
+            start = self.bert.contextWordSim("start", word)
+            stop = max(self.bert.contextWordSim("stop", word), self.bert.contextWordSim("halt", word))
+            if start > self.wordSimCutoff and start > stop and start > forward:
+                slots["continuous"] = "start"
+            if stop > self.wordSimCutoff and stop > start and stop > backward:
+                slots["continuous"] = "stop"
+            if not slots["continuous"] and self.bert.contextWordSim("continuous", word) > self.wordSimCutoff:
+                slots["continuous"] = "start"
+
+            go = max(self.bert.contextWordSim("go", word), self.bert.contextWordSim("head", word))
+            turn = self.bert.contextWordSim("turn", word)
+            if go > self.wordSimCutoff and go > turn:
+                slots["directions"].append("go")
+            if turn > self.wordSimCutoff and turn > go and turn > start:
+                slots["directions"].append("turn")
             if word == "by": slots["directions"].append("by")
+
+            feet = self.bert.contextWordSim("feet", word)
+            seconds = self.bert.contextWordSim("seconds", word)
+            if feet > self.wordSimCutoff and feet > seconds:
+                slots["driveModifiers"].append("feet")
+            if seconds > self.wordSimCutoff and seconds > feet:
+                slots["driveModifiers"].append("seconds")
 
             try:
                 value = float(word)
@@ -559,19 +591,22 @@ class Robot:
             except ValueError:
                 continue
 
+        if "subtract" in command:
+            slots["speedChange"] = "sub"
+
         return self.drivingSlotsToActions(slots)
 
     def drivingSlotsToActions(self, slots):
         if "circle" in slots["shape"]:
             for heading in range(0, 360, 30):
-                self.droid.roll(self.speed, heading, 0.6)
+                self.droid.roll(self.speed, heading, 1)
             self.droid.roll(0, 0, 0)
             return True
         if "square" in slots["shape"]:
             for heading in range(0, 360, 90):
                 self.droid.roll(0, heading, 0)
                 time.sleep(0.35)
-                self.droid.roll(self.speed, heading, 0.6)
+                self.droid.roll(self.speed, heading, 1)
             self.droid.roll(0, 0, 0)
             return True
 
@@ -599,7 +634,7 @@ class Robot:
             if len(slots["directions"]) == 0:
                 self.heading = slots["numValues"].get()
             elif slots["directions"][0] == "turn":
-                roll(self, 0.5, (self.heading + slots["numValues"].get()) % 360, 0)
+                self.droid.roll(0.5, (self.heading + slots["numValues"].get()) % 360, 0)
             else:
                 tup = self.angleParser(0, slots["directions"])
                 if tup[1] == -1: return False
@@ -620,6 +655,9 @@ class Robot:
                 self.speed = self.speed + mult*((1-perc)*100 + perc*self.speed)*slots["numValues"].get()/100
             else:
                 self.speed += mult*0.25
+
+            if self.speed == 0: print("Speed can't be 0, setting it to 0.1.")
+            self.speed = max(min(self.speed, 1), 0.1)
 
             if hasattr(self.droid, "is_continuous_roll"):
                 if self.droid.is_continuous_roll:
@@ -663,7 +701,7 @@ class Robot:
                     i = tup[1]
 
                     if slots["numValues"].empty() or ("seconds" not in slots["driveModifiers"] and "feet" not in slots["driveModifiers"]):
-                        self.droid.roll(speed, tup[0], 0.6)
+                        self.droid.roll(speed, tup[0], 1)
                     elif "seconds" in slots["driveModifiers"]:
                         self.droid.roll(speed, tup[0], slots["numValues"].get())
                     else:
@@ -719,7 +757,7 @@ class Robot:
         # slot filler for stance
         ################################################
 
-        # connect - determines if this command issues a stance chane, values = bi, tri
+        # connect - determines if this command issues a stance change, values = bi, tri
         # waddle - boolean for waddle
         slots = {"stance": None, "waddle": False}
 
@@ -769,9 +807,6 @@ class Robot:
         if re.search("fall", command):
             self.droid.animate(14)
             return True
-        if re.search("run away", command):
-            self.droid.animate(19)
-            return True
         if re.search("(dance|move)", command):
             self.droid.animate(20)
             return True
@@ -779,8 +814,14 @@ class Robot:
         if re.search("(sing|sound|noise)", command):
             self.droid.play_sound(3)
             return True
+        if re.search("laugh", command):
+            self.droid.play_sound(random.choice([34, 37]))
+            return True
         if re.search("scream", command):
             self.droid.play_sound(7)
+            return True
+        if re.search("alarm", command):
+            self.droid.play_sound(random.choice([18, 19, 20, 21]))
             return True
 
         return False
@@ -798,6 +839,9 @@ class Robot:
             return True
         if re.search("(behind|back)", command):
             self.droid.rotate_head(180)
+            return True
+        if re.search("around", command):
+            self.droid.animate(22)
             return True
         return False
 

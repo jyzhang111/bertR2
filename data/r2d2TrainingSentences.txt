@@ -29,15 +29,18 @@ drivingSentences :: Go North.
 drivingSentences :: Go East.
 drivingSentences :: Go South-by-southeast
 drivingSentences :: Run away!
-drivingSentences :: There’s a storm trooper to your left!  Run away from the storm trooper!
+drivingSentences :: There's a bug behind you, run away!
+drivingSentences :: There’s a storm trooper to your left! Run away from the storm trooper!
 drivingSentences :: Turn to heading 30 degrees.
 drivingSentences :: Reset your heading to 0
 drivingSentences :: Turn to face North.
 drivingSentences :: Start rolling forward.
 drivingSentences :: Stop continuous roll.
 drivingSentences :: Increase your speed by 50%.
+drivingSentences :: Reduce speed.
 drivingSentences :: Turn to your right.
 drivingSentences :: Stop.
+drivingSentences :: Stop rolling.
 drivingSentences :: Set speed to be 0.
 drivingSentences :: Set speed to be 20%
 drivingSentences :: Go forward for 2 feet, then turn right.
@@ -61,18 +64,21 @@ lightSentences :: Change the color on both LEDs to be green.
 
 ## Animations/sound
 
-animationSentences :: Fall over
-animationSentences :: Scream
-animationSentences :: Make some noise
-animationSentences :: Laugh
-animationSentences :: Play an alarm
+animationSentences :: Fall over.
+animationSentences :: Fall.
+animationSentences :: Scream.
+animationSentences :: Make some noise.
+animationSentences :: Laugh.
+animationSentences :: laugh
+animationSentences :: Play an alarm.
 
 ## Head rotation
 
-headSentences :: turn your head to face forward
-headSentences :: turn your head to the left
-headSentences :: look behind you
-headSentences :: look to your right
+headSentences :: Turn your head to face forward.
+headSentences :: Turn your head to the left.
+headSentences :: Look behind you.
+headSentences :: Look forward.
+headSentences :: Look to your right.
 
 ## Connection sentences
 
@@ -88,6 +94,7 @@ stanceSentences :: Set your stance to be biped.
 stanceSentences :: Set your stance to be triped.
 stanceSentences :: Put down your third wheel.
 stanceSentences :: Stand on your tiptoes.
+stanceSentences :: Stop standing on your tiptoes.
 stanceSentences :: Start waddling.
 stanceSentences :: Waddle on.
 
