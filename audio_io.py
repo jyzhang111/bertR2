@@ -153,8 +153,7 @@ def main():
     # for a list of supported languages.
 
     # 1st param: replace this with your own robot ID
-    # 2nd param: wordSimilarityCutoff, range: 0.0 - 1.0. A higher value means we are more
-    #  will accept less variation on words
+    # 2nd param: wordSimCutoff, range: 0.0 - 1.0.
     # 3rd param: voiceIO?
     robot = Robot("D2-152E", 0.70, True)
 
